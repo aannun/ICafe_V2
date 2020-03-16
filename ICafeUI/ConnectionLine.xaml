@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="ICafeUI.ConnectionLine"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ICafeUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="50">
+    <Grid x:Name="Grid">
+        <Line x:Name="Line" Stroke="Black" StrokeThickness="2" IsHitTestVisible="False"></Line>
+        <Border x:Name="Center" Background="Black" CornerRadius="50,50,50,50" MouseRightButtonUp="Border_MouseRightButtonDown">
+            <Border Background="White" CornerRadius="50,50,50,50" Width="15" Height="15" IsHitTestVisible="False"></Border>
+        </Border>
+    </Grid>
+</UserControl>

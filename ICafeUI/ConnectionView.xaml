@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="ICafeUI.ConnectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ICafeUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid x:Name="Grid">
+        <Grid.Resources>
+            <ContextMenu x:Key="ContextMenu">
+                <MenuItem Header="Destroy All Connections"></MenuItem>
+                <MenuItem Header="Destroy Connection To"></MenuItem>
+            </ContextMenu>
+        </Grid.Resources>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Column="0" Grid.Row="0" Content="Destroy Connection" Width="120" HorizontalAlignment="Left" Background="OrangeRed" Foreground="White" Click="Button_Click"></Button>
+        
+        <StackPanel Grid.Column="0" Grid.Row="1">
+            <Separator Height="10"></Separator>
+            <Label x:Name="OutputName" Content="Output Node" HorizontalAlignment="Center" Background="White"></Label>
+            <Separator Height="10"></Separator>
+            <Grid x:Name="Outputs">
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <Separator Height="10"></Separator>
+            <Label Content="Connections" HorizontalAlignment="Center" Background="White"></Label>
+            <Separator Height="10"></Separator>
+            <Grid x:Name="Connections">
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Grid.Row="1">
+            <Separator Height="10"></Separator>
+            <Label x:Name="InputName" Content="Input Node" HorizontalAlignment="Center" Background="White"></Label>
+            <Separator Height="10"></Separator>
+            <Grid x:Name="Inputs">
+            </Grid>
+        </StackPanel>
+
+        <Canvas x:Name="HandlerSlot" Panel.ZIndex="1"></Canvas>
+    </Grid>
+</UserControl>
