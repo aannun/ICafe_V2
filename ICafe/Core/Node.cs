@@ -194,7 +194,7 @@ namespace ICafe.Core
         public FieldData[] GetFields()
         {
             return fields != null ? fields.Values.ToArray() : null;
-        }
+        } 
 
         public ParameterData[] GetParameters()
         {
