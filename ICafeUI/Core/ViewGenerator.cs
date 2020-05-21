@@ -16,13 +16,14 @@ namespace ICafeUI.Core
     {
         class ENUM { }
         class STRUCT { }
+        class OTHER { }
 
-        static Dictionary<Type, Func<ICafe.Core.ReactiveField, int, ICafe.Core.Node, UIElement>> Converters;
+        static Dictionary<Type, Func<ICafe.Core.ReactiveField, UIElement>> Converters;
         static float separator_height = 2;
 
         static ViewGenerator()
         {
-            Converters = new Dictionary<Type, Func<ICafe.Core.ReactiveField, int, ICafe.Core.Node, UIElement>>();
+            Converters = new Dictionary<Type, Func<ICafe.Core.ReactiveField, UIElement>>();
             Converters.Add(typeof(int), NumberField);
             Converters.Add(typeof(float), NumberField);
             Converters.Add(typeof(double), NumberField);
@@ -30,6 +31,7 @@ namespace ICafeUI.Core
             Converters.Add(typeof(bool), BoolField);
             Converters.Add(typeof(ENUM), EnumField);
             Converters.Add(typeof(STRUCT), StructField);
+            Converters.Add(typeof(OTHER), OtherField);
         }
 
         public static Window GenerateViewWindow(ICafe.Core.Node node)
@@ -54,7 +56,7 @@ namespace ICafeUI.Core
             {
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    UIElement elem = CreateField(fields[i].Field, i, node);
+                    UIElement elem = CreateField(fields[i].Field, node);
                     if (elem != null)
                     {
                         stackPanel.Children.Add(elem);
@@ -63,31 +65,25 @@ namespace ICafeUI.Core
                 }
             }
 
-            if(node.GetActiveField() != null)
-                node.GetActiveField().Active = true;
+            //if (node.GetActiveField() != null)
+            //    node.GetActiveField().Active = true;
             win.Show();
             return win;
         }
 
-        static UIElement CreateField(ICafe.Core.ReactiveField element, int field_index, ICafe.Core.Node node)
+        static UIElement CreateField(ICafe.Core.ReactiveField element, ICafe.Core.Node node)
         {
             Type t = GetConvertedType(element.field.FieldType);
 
             if (!Converters.ContainsKey(t))
                 return null;
 
-            UIElement el = Converters[t](element, field_index, node);
-            if (el == null)
-                return null;
+            UIElement el = Converters[t](element);
+            //if (el == null)
+            //    return null;
 
-            Border border = new Border { Background = Brushes.White, BorderBrush = Brushes.Black, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(5) };
+            Border border = new Border { Background = Brushes.White, BorderBrush = Brushes.Black, BorderThickness = new Thickness(1), VerticalAlignment = VerticalAlignment.Top };
             border.Child = new Label { Content = element.field.Name };
-
-            CheckBox box = new CheckBox { VerticalAlignment = VerticalAlignment.Center };
-            Binding b = new Binding("Active");
-            b.Source = element;
-            b.Mode = BindingMode.TwoWay;
-            box.SetBinding(CheckBox.IsCheckedProperty, b);
 
             Grid grid = new Grid();
 
@@ -103,13 +99,26 @@ namespace ICafeUI.Core
             grid.ColumnDefinitions[0].MaxWidth = 20;
             grid.ColumnDefinitions[2].MaxWidth = 200;
 
-            Grid.SetColumn(box, 0);
             Grid.SetColumn(border, 2);
-            Grid.SetColumn(el, 4);
-
-            grid.Children.Add(box);
             grid.Children.Add(border);
-            grid.Children.Add(el);
+
+            if (el != null)
+            {
+                Grid.SetColumn(el, 4);
+                grid.Children.Add(el);
+            }
+
+            if (node != null)
+            {
+                CheckBox box = new CheckBox { VerticalAlignment = VerticalAlignment.Top };
+                Binding b = new Binding("Active");
+                b.Source = element;
+                b.Mode = BindingMode.TwoWay;
+                box.SetBinding(CheckBox.IsCheckedProperty, b);
+
+                Grid.SetColumn(box, 0);
+                grid.Children.Add(box);
+            }
 
             return grid;
         }
@@ -125,7 +134,9 @@ namespace ICafeUI.Core
                 return typeof(ENUM);
             if (type.IsValueType && !type.IsPrimitive)
                 return typeof(STRUCT);
-            return type;
+            if (ICafe.Core.Node.IsTypeValid(type))
+                return type;
+            return typeof(OTHER);
         }
 
         static void Bind(ICafe.Core.ReactiveField element, Control ui, DependencyProperty property)
@@ -136,7 +147,7 @@ namespace ICafeUI.Core
             ui.SetBinding(property, b);
         }
 
-        static UIElement TextField(ICafe.Core.ReactiveField element, int field_index, ICafe.Core.Node node)
+        static UIElement TextField(ICafe.Core.ReactiveField element)
         {
             TextBox text = new TextBox();
             text.VerticalContentAlignment = VerticalAlignment.Center;
@@ -145,7 +156,7 @@ namespace ICafeUI.Core
             return text;
         }
 
-        static UIElement NumberField(ICafe.Core.ReactiveField element, int field_index, ICafe.Core.Node node)
+        static UIElement NumberField(ICafe.Core.ReactiveField element)
         {
             NumberBox text = new NumberBox(element.field.FieldType);
             text.VerticalContentAlignment = VerticalAlignment.Stretch;
@@ -154,7 +165,7 @@ namespace ICafeUI.Core
             return text;
         }
 
-        static UIElement BoolField(ICafe.Core.ReactiveField element, int field_index, ICafe.Core.Node node)
+        static UIElement BoolField(ICafe.Core.ReactiveField element)
         {
             CheckBox check = new CheckBox();
             check.VerticalAlignment = VerticalAlignment.Center;
@@ -163,7 +174,7 @@ namespace ICafeUI.Core
             return check;
         }
 
-        static UIElement EnumField(ICafe.Core.ReactiveField element, int field_index, ICafe.Core.Node node)
+        static UIElement EnumField(ICafe.Core.ReactiveField element)
         {
             ComboBox box = new ComboBox();
             Bind(element, box, ComboBox.SelectedIndexProperty);
@@ -173,7 +184,7 @@ namespace ICafeUI.Core
             return box;
         }
 
-        static UIElement StructField(ICafe.Core.ReactiveField element, int field_index, ICafe.Core.Node node)
+        static UIElement StructField(ICafe.Core.ReactiveField element)
         {
             Expander exp = new Expander();
             StackPanel panel = new StackPanel();
@@ -183,13 +194,18 @@ namespace ICafeUI.Core
             {
                 for (int i = 0; i < element.internal_fields.Count; i++)
                 {
-                    UIElement elem = CreateField(element.internal_fields[i], field_index, node);
+                    UIElement elem = CreateField(element.internal_fields[i], null);
                     if (elem != null)
                         panel.Children.Add(elem);
                 }
             }
 
             return exp;
+        }
+
+        static UIElement OtherField(ICafe.Core.ReactiveField element)
+        {
+            return null;
         }
     }
 }

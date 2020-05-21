@@ -47,20 +47,20 @@ namespace ICafeUI
             Border.Background = color;
         }
 
-        public List<Node> GetConnections()
-        {
-            var list = IsInput ? node.Inputs : node.Outputs;
-            if (list == null) return null;
+        //public List<Node> GetConnections()
+        //{
+        //    var list = IsInput ? node.Inputs : node.Outputs;
+        //    if (list == null) return null;
 
-            List<Node> out_list = new List<Node>();
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (!out_list.Contains(list[i]))
-                    out_list.Add(list[i]);
-            }
+        //    List<Node> out_list = new List<Node>();
+        //    for (int i = 0; i < list.Count; i++)
+        //    {
+        //        if (!out_list.Contains(list[i]))
+        //            out_list.Add(list[i]);
+        //    }
 
-            return out_list;
-        }
+        //    return out_list;
+        //}
 
         void AddConnection()
         {
@@ -78,31 +78,31 @@ namespace ICafeUI
 
         public void Refresh()
         {
-            var connections = GetConnections();
-            if (connections == null) return;
+            //var connections = GetConnections();
+            //if (connections == null) return;
 
-            if (connections.Count > lines.Count)
-            {
-                int num = connections.Count - lines.Count;
-                for (int i = 0; i < num; i++)
-                    AddConnection();
-            }
-            else if (connections.Count < lines.Count)
-            {
-                int num = lines.Count - connections.Count;
-                for (int i = 0; i < num; i++)
-                    RemoveConnection(lines[lines.Count - 1]);
-            }
+            //if (connections.Count > lines.Count)
+            //{
+            //    int num = connections.Count - lines.Count;
+            //    for (int i = 0; i < num; i++)
+            //        AddConnection();
+            //}
+            //else if (connections.Count < lines.Count)
+            //{
+            //    int num = lines.Count - connections.Count;
+            //    for (int i = 0; i < num; i++)
+            //        RemoveConnection(lines[lines.Count - 1]);
+            //}
 
-            AssignConnectionNodes();
-            UpdateConnections();
+            //AssignConnectionNodes();
+            //UpdateConnections();
         }
 
         void AssignConnectionNodes()
         {
-            var connections = GetConnections();
-            for (int i = 0; i < connections.Count; i++)
-                lines[i].SetNodes(IsInput ? node : connections[i], !IsInput ? node : connections[i]);
+            //var connections = GetConnections();
+            //for (int i = 0; i < connections.Count; i++)
+            //    lines[i].SetNodes(IsInput ? node : connections[i], !IsInput ? node : connections[i]);
         }
 
         public void IgnoreConnection(Node node)
@@ -116,17 +116,17 @@ namespace ICafeUI
 
         public void UpdateConnections()
         {
-            var connections = GetConnections();
-            if (connections == null) return;
+            //var connections = GetConnections();
+            //if (connections == null) return;
 
-            for (int i = 0; i < connections.Count; i++)
-            {
-                ConnectionLine l = lines[i];
-                ConnectionSlot cs = IsInput ? connections[i].RightConnector : connections[i].LeftConnector;
+            //for (int i = 0; i < connections.Count; i++)
+            //{
+            //    //ConnectionLine l = lines[i];
+            //    //ConnectionSlot cs = IsInput ? connections[i].RightConnector : connections[i].LeftConnector;
 
-                Point end = TranslatePoint(new Point(cs.ActualWidth * -0.5f, cs.ActualHeight * -0.5f), cs);
-                l.SetLineEnd(-end.X, -end.Y);
-            }
+            //    //Point end = TranslatePoint(new Point(cs.ActualWidth * -0.5f, cs.ActualHeight * -0.5f), cs);
+            //    //l.SetLineEnd(-end.X, -end.Y);
+            //}
         }
     }
 }

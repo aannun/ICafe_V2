@@ -12,42 +12,36 @@ namespace ICafeUI
 {
     class Dragger : Adorner
     {
-        public Action<UIElement> OnDrag, OnDragEnd, MoveDrag;
-        public bool SnapOnEndDrag = false;
+        public Action<UIElement> OnDrag, OnDragEnd;
+        public Action<Point> MoveDrag;
 
-        UIElement element, view;
+        UIElement element;
         bool is_moving;
         TranslateTransform move_start;
         Point move_delta;
 
-        public Dragger(UIElement element, UIElement parent) : base(element)
+        public Dragger(UIElement element) : base(element)
         {
             this.element = element;
-            view = parent;
 
             element.MouseUp += Element_MouseUp;
             element.MouseDown += Element_MouseDown;
-            parent.MouseMove += Element_MouseMove;
-            parent.MouseLeave += Element_MouseLeave;
-            parent.MouseUp += Element_MouseUp;
+            element.MouseMove += Element_MouseMove;
 
             move_start = element.RenderTransform as TranslateTransform;
-        }
-
-        private void Element_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Reset();
         }
 
         private void Element_MouseMove(object sender, MouseEventArgs e)
         {
             if (!is_moving) return;
 
-            Point p = Mouse.GetPosition(view);
-            element.RenderTransform = new TranslateTransform((move_start != null ? move_start.X : 0) + p.X - move_delta.X, (move_start != null ? move_start.Y : 0) + p.Y - move_delta.Y);
-            e.Handled = true;
+            Point p = Mouse.GetPosition(Core.StateContainer.View);
+            Core.Selector.MoveAllSelected(new Point(p.X - move_delta.X, p.Y - move_delta.Y));
+            move_delta = p;
 
-            MoveDrag?.Invoke(element);
+
+            e.Handled = true;
+            //MoveDrag?.Invoke(new Point(p.X - move_delta.X, p.Y - move_delta.Y));
         }
 
         private void Element_MouseDown(object sender, MouseButtonEventArgs e)
@@ -55,6 +49,7 @@ namespace ICafeUI
             if (e.LeftButton != MouseButtonState.Pressed || is_moving) return;
 
             Activate();
+            element.CaptureMouse();
             e.Handled = true;
         }
 
@@ -63,12 +58,13 @@ namespace ICafeUI
             if (e.LeftButton != MouseButtonState.Released) return;
 
             Reset();
+            element.ReleaseMouseCapture();
         }
 
         private void Activate()
         {
             is_moving = true;
-            move_delta = Mouse.GetPosition(view);
+            move_delta = Mouse.GetPosition(Core.StateContainer.View);
 
             OnDrag?.Invoke(element);
         }
@@ -80,9 +76,7 @@ namespace ICafeUI
             OnDragEnd?.Invoke(element);
 
             is_moving = false;
-            if (SnapOnEndDrag)
-                element.RenderTransform = move_start;
-           move_start = element.RenderTransform as TranslateTransform;
+            move_start = element.RenderTransform as TranslateTransform;
         }
     }
 }

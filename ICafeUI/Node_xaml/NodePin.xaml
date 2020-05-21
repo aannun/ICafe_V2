@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="ICafeUI.Node_xaml.NodePin"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ICafeUI.Node_xaml"
+             mc:Ignorable="d" >
+    <Grid LayoutUpdated="onLayoutUpdated">
+        <Button Name="Container" BorderBrush="{x:Null}" Background="White" PreviewMouseLeftButtonDown="onMouseLeftButtonDown" PreviewDrop="onDrop" AllowDrop="True">
+            <Grid Name="Grid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="Name" Grid.Column="0" Foreground="Black" TextAlignment="Center" VerticalAlignment="Center" MinHeight="10" Margin="2" FontSize="10" IsHitTestVisible="False">Pin Name</TextBlock>
+                <Border x:Name="Image" Grid.Column="1" Width="15" Height="15" Background="LimeGreen" CornerRadius="10,10,10,10" VerticalAlignment="Center">
+                    <Border x:Name="Int_Image" Width="11" Height="11" Background="White" CornerRadius="5,5,5,5"></Border>
+                </Border>
+            </Grid>
+        </Button>
+    </Grid>
+</UserControl>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,22 +19,44 @@ namespace ICafeUI
     /// <summary>
     /// Logica di interazione per MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IControlInterface
+    public partial class MainWindow : Window
     {
-        Dictionary<Guid, Node> nodes;
-        ContextMenu cm;
+        Core.TopBar top_bar;
+
+        bool mouseDown = false;
+        bool receivedDrop = false;
+        Point drop_position, mouseDownPos;
 
         public MainWindow()
         {
             InitializeComponent();
-            InitializeContextMenu();
 
-            nodes = new Dictionary<Guid, Node>();
-
-            ICafe.Core.Connector.OnConnectionDeleted += OnConnectionDeleted;
             Closed += MainWindow_Closed;
-
             Loaded += MainWindow_Loaded;
+
+            top_bar = new Core.TopBar();
+            top_bar.Player.StateChanged += UpdatePlayState;
+            View.Drop += View_Drop;
+            NodeCreator.DragEnd += View_ReceiveDrop;
+
+            Core.StateContainer.Init(Container);
+        }
+
+        private void View_Drop(object sender, DragEventArgs e)
+        {
+            drop_position = e.GetPosition(Container);
+            receivedDrop = true;
+        }
+
+        private void View_ReceiveDrop(object sender, object e)
+        {
+            if (receivedDrop)
+            {
+                var name = e.ToString();
+                var pos = drop_position;
+                Core.StateContainer.AddNode(name, new Point(pos.X, pos.Y));
+                receivedDrop = false;
+            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -49,83 +72,108 @@ namespace ICafeUI
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             Core.WindowFactory.CloseAllWindows();
+            top_bar.Stop();
         }
 
-        void OnConnectionDeleted(Guid idA, Guid idB)
+        private void Play_Click(object sender, RoutedEventArgs e)
         {
-            if (nodes.ContainsKey(idA))
-                nodes[idA].RefreshConnections();
-            if (nodes.ContainsKey(idB))
-                nodes[idB].RefreshConnections();
+            top_bar.Play();
         }
 
-        public void AddControl(Control control)
+        private void Stop_Click(object sender, RoutedEventArgs e)
         {
-            Grid.Children.Add(control);
+            top_bar.Stop();
         }
 
-        public void RemoveControl(Control control)
+        void UpdatePlayState()
         {
-            Grid.Children.Remove(control);
+            bool stop = !top_bar.Player.IsPlaying;
+
+            Stop.Visibility = stop ? Visibility.Collapsed : Visibility.Visible;
+            Play.Visibility = !stop ? Visibility.Collapsed : Visibility.Visible;
+            View.Background = stop ? Brushes.LightGray : Brushes.LightBlue;
         }
 
-        void InitializeContextMenu()
+        private void Save_Click(object sender, RoutedEventArgs e)
         {
-            cm = this.FindResource("ContextMenu") as ContextMenu;
-            MenuItem item = cm.Items[0] as MenuItem;
+            top_bar.SaveAs();
+        }
 
-            var list = ICafe.Core.Node.GetAllNodeTypes();
+        private void SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            top_bar.SaveAs();
+        }
 
-            for (int i = 0; i < list.Length; i++)
+        private void Open_Click(object sender, RoutedEventArgs e)
+        {
+            top_bar.Open();
+        }
+
+        private void New_Click(object sender, RoutedEventArgs e)
+        {
+            top_bar.New();
+        }
+
+        private void View_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (mouseDown)
             {
-                MenuItem t = new MenuItem { Header = list[i].Name, Name = list[i].Name };
-                item.Items.Add(t);
-                t.Click += SelectNode;
+                // When the mouse is held down, reposition the drag selection box.
+
+                Point mousePos = e.GetPosition(View);
+
+                if (mouseDownPos.X < mousePos.X)
+                {
+                    Canvas.SetLeft(selectionBox, mouseDownPos.X);
+                    selectionBox.Width = mousePos.X - mouseDownPos.X;
+                }
+                else
+                {
+                    Canvas.SetLeft(selectionBox, mousePos.X);
+                    selectionBox.Width = mouseDownPos.X - mousePos.X;
+                }
+
+                if (mouseDownPos.Y < mousePos.Y)
+                {
+                    Canvas.SetTop(selectionBox, mouseDownPos.Y);
+                    selectionBox.Height = mousePos.Y - mouseDownPos.Y;
+                }
+                else
+                {
+                    Canvas.SetTop(selectionBox, mousePos.Y);
+                    selectionBox.Height = mouseDownPos.Y - mousePos.Y;
+                }
             }
-        }
-
-        private void SelectNode(object sender, RoutedEventArgs e)
-        {
-            MenuItem t = sender as MenuItem;
-
-            ICafe.Core.Node n = ICafe.Core.Node.CreateNodeFromTypeName(t.Name) as ICafe.Core.Node;
-            if (n == null) return;
-
-            n.Initialize();
-            Node node = new Node(this, n);
-
-            Point p = Mouse.GetPosition(this);
-            node.RenderTransform = new TranslateTransform(p.X - ActualWidth * 0.5f, p.Y - ActualHeight * 0.5f);
-
-            node.OnDestroy += DestroyNode;
-            Grid.Children.Add(node);
-            nodes.Add(node.ID, node);
-        }
-
-        public void DestroyNode(Node n)
-        {
-            if (nodes.ContainsKey(n.ID))
-            {
-                Grid.Children.Remove(n);
-                nodes.Remove(n.ID);
-            }
-        }
-
-        private void Grid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            cm.IsOpen = true;
-        }
-
-        public Node GetNode(Guid id)
-        {
-            if (nodes.ContainsKey(id))
-                return nodes[id];
-            return null;
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Core.Selector.RemoveAllSelections();
+
+            mouseDown = true;
+            mouseDownPos = e.GetPosition(View);
+            Container.CaptureMouse();
+
+            // Initial placement of the drag selection box.         
+            Canvas.SetLeft(selectionBox, mouseDownPos.X);
+            Canvas.SetTop(selectionBox, mouseDownPos.Y);
+            selectionBox.Width = 0;
+            selectionBox.Height = 0;
+
+            // Make the drag selection box visible.
+            selectionBox.Visibility = Visibility.Visible;
+        }
+
+        private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            mouseDown = false;
+            Container.ReleaseMouseCapture();
+
+            // Hide the drag selection box.
+            selectionBox.Visibility = Visibility.Collapsed;
+
+            Point mouseUpPos = e.GetPosition(View);
+            Core.Selector.SelectInRect(mouseDownPos, mouseUpPos);
         }
     }
 }

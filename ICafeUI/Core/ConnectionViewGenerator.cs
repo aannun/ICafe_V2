@@ -49,9 +49,10 @@ namespace ICafeUI.Core
             win.Content = scrollview;
 
             win.Closed += Win_Closed;
+            active_windows.Add(new NodePair { A = node_input, B = node_output }, new WindowData { window = win, cv = view });
+
             win.Show();
 
-            active_windows.Add(new NodePair { A = node_input, B = node_output }, new WindowData { window = win, cv = view });
             return win;
         }
 

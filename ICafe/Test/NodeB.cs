@@ -33,6 +33,15 @@ namespace ICafe.Core
             public double value_struct;
             [Reactive]
             public bool value2_struct;
+
+            [Reactive]
+            public tt internal_test;
+        }
+
+        public struct tt
+        {
+            [Reactive]
+            public int a;
         }
 
         public NodeB()
@@ -43,6 +52,7 @@ namespace ICafe.Core
 
         public void Execute(double a, double b, double c, double d, double e, int test)
         {
+            Console.Write("test");
         }
     }
 }

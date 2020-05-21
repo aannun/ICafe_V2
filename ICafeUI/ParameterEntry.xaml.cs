@@ -24,16 +24,40 @@ namespace ICafeUI
     {
         public string EntryName { get; private set; }
         ParametersList parent;
+        MouseButton button;
+        AssignType assigned;
 
-        public ParameterEntry(ParametersList parent, string content, AssignType assigned)
+        public ParameterEntry(ParametersList parent, string content, AssignType assigned, MouseButton button)
         {
             InitializeComponent();
 
             this.parent = parent;
             Label.Text = content;
             EntryName = content;
+            this.button = button;
 
+            this.assigned = assigned;
             SetAssignColor(assigned);
+
+            MouseUp += ParameterEntry_Select;
+            MouseEnter += ParameterEntry_MouseEnter;
+            MouseLeave += ParameterEntry_MouseLeave;
+        }
+
+        private void ParameterEntry_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SetAssignColor(assigned);
+        }
+
+        private void ParameterEntry_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Border.Background = Brushes.LightGray;
+        }
+
+        private void ParameterEntry_Select(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == button)
+                parent.SelectEntry(this);
         }
 
         void SetAssignColor(AssignType assigned)
@@ -41,14 +65,9 @@ namespace ICafeUI
             switch (assigned)
             {
                 case AssignType.Empty: Border.Background = Brushes.White; break;
-                case AssignType.Assigned: Border.Background = Brushes.LightGray; break;
-                case AssignType.AssignedToSelf: Border.Background = Brushes.LightGray; break;
+                case AssignType.Assigned: Border.Background = Brushes.Gray; break;
+                case AssignType.AssignedToSelf: Border.Background = Brushes.LightGreen; break;
             }
-        }
-
-        private void ParameterEntry_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            parent.SelectEntry(this);
         }
 
         public void SetTop()

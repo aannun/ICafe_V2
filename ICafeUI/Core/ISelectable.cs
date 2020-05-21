@@ -8,6 +8,8 @@ namespace ICafeUI.Core
 {
     public interface ISelectable
     {
+        event EventHandler OnDestroy;
+
         void Select();
         void Deselect();
         void Destroy();

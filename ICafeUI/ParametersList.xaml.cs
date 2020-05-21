@@ -20,23 +20,34 @@ namespace ICafeUI
     /// </summary>
     public partial class ParametersList : UserControl
     {
+        public Action<ParametersList> OnDeactivate;
+        public Action<ParametersList, ParameterEntry> OnSelect;
+
         Node node;
-        ICafe.Core.Node effect_node;
-        Type type;
+
+        EntryData[] entries;
+        MouseButton button;
 
         float entry_height = 25;
         float final_height;
         float desired_width, desired_height;
 
-        public ParametersList(Node node, ICafe.Core.Node effect_node, Type type, float width, float height)
+        public struct EntryData
+        {
+            public string name;
+            public AssignType type;
+        }
+
+        public ParametersList(Node node, EntryData[] entries, MouseButton button, float width, float height)
         {
             InitializeComponent();
 
             this.node = node;
-            this.effect_node = effect_node;
-            this.type = type;
             desired_width = width;
             desired_height = height;
+            this.button = button;
+
+            this.entries = entries;
 
             PopulateList();
 
@@ -51,38 +62,16 @@ namespace ICafeUI
 
         void PopulateList()
         {
-            var list = effect_node.GetParameters();
-            if (list == null)
-                return;
+            if (entries == null) return;
 
-            int count = 0;
-            for (int i = 0; i < list.Length; i++)
-                if (ICafe.Core.Node.CanBeAssigned(type, list[i].Parameter.ParameterType))
-                    count++;
-
-            if (count == 0)
-            {
-                final_height = 0;
-                return;
-            }
-
-            final_height = Math.Max(entry_height, desired_height / (float)count);
-            for (int i = 0; i < list.Length; i++)
-                if (ICafe.Core.Node.CanBeAssigned(type, list[i].Parameter.ParameterType))
-                    AddEntry(list[i].Parameter.Name, GetAssignType(list[i], Core.StateContainer.CurrentHandledNode));
-        }
-
-        AssignType GetAssignType(ICafe.Core.Node.ParameterData data, Node curr_node)
-        {
-            if (data.Input == null)
-                return AssignType.Empty;
-            else if (node.GetNodeFromID(data.Input.Node.ID) == curr_node) return AssignType.AssignedToSelf;
-            return AssignType.Assigned;
+            final_height = Math.Max(entry_height, desired_height / (float)entries.Length);
+            for (int i = 0; i < entries.Length; i++)
+                    AddEntry(entries[i].name, entries[i].type);
         }
 
         void AddEntry(string entry_value, AssignType assigned)
         {
-            ParameterEntry entry = new ParameterEntry(this, entry_value, assigned);
+            ParameterEntry entry = new ParameterEntry(this, entry_value, assigned, button);
             entry.Height = final_height;
             entry.Width = desired_width;
 
@@ -102,19 +91,22 @@ namespace ICafeUI
 
             Width = desired_width;
             Height = final_height == 0 ? 0 : Math.Max(Stack.Children.Count * final_height, desired_height);
-
-            Margin = new Thickness(0, -(node.ActualHeight - Height), 0, 0);
         }
 
         private void ParametersList_MouseLeave(object sender, MouseEventArgs e)
         {
-            node.ReleaseMouse();
+            OnDeactivate?.Invoke(this);
+            
+            //node.ReleaseMouse();
         }
 
         public void SelectEntry(ParameterEntry entry)
         {
-            node.RequestConnection(entry.EntryName);
-            node.ReleaseMouse();
+            OnSelect?.Invoke(this, entry);
+            OnDeactivate?.Invoke(this);
+
+            //node.RequestConnection(entry.EntryName);
+            //node.ReleaseMouse();
         }
     }
 }

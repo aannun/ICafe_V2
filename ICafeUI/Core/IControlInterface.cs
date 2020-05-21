@@ -7,10 +7,9 @@ using System.Windows.Controls;
 
 namespace ICafeUI
 {
-    interface IControlInterface
+    public interface IControlInterface
     {
         void AddControl(Control control);
         void RemoveControl(Control control);
-        Node GetNode(Guid id);
     }
 }

@@ -9,12 +9,21 @@ namespace ICafe.Core
     public class NodeA : Core.Node
     {
         [Reactive]
-        public object test;
+        public int b = 1;
 
-        public void Execute(ref int value, string string_value, object test)
+        [Reactive]
+        public bool test = true;
+
+        public void Start(bool test)
         {
-            Console.WriteLine(string_value + " " + value);
-            value++;
+            Console.Write("start");
+        }
+
+        public void Execute([Collection(2)] int value, string string_value)
+        {
+            //test = !test;
+
+            Console.Write("aaa");
         }
     }
 }

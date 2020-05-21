@@ -82,7 +82,7 @@ namespace ICafeUI
         UIElement AddRow(Grid grid, string value, bool insert_separator = true)
         {
             grid.RowDefinitions.Add(new RowDefinition());
-            Border border = new Border { Background = Brushes.White, CornerRadius = new CornerRadius(5), BorderBrush = Brushes.Black, BorderThickness = new Thickness(1) };
+            Border border = new Border { Background = Brushes.White, BorderBrush = Brushes.Black, BorderThickness = new Thickness(1) };
             border.Child = new Label { Content = value, HorizontalAlignment = HorizontalAlignment.Center, IsHitTestVisible = false };
             Grid.SetRow(border, grid.RowDefinitions.Count - 1);
             grid.Children.Add(border);
@@ -130,8 +130,8 @@ namespace ICafeUI
             }
             else
             {
-                var v = output.GetField(value);
-                OpenContextMenu(true, value, v.Inputs);
+                //var v = output.GetField(value);
+                //OpenContextMenu(true, value, v.Inputs);
             }
         }
 
@@ -177,8 +177,7 @@ namespace ICafeUI
                 if (label == null) continue;
 
                 var param = input.GetParameter(label.Content.ToString());
-                ICafe.Core.Connector.ConnectionData d = new ICafe.Core.Connector.ConnectionData();
-                ICafe.Core.Connector.CreateConnection(ref d, output, current_field.Field.field.Name, input, param.Parameter.Name);
+               // ICafe.Core.Connector.CreateConnection(output, current_field.Field.field.Name, input, param.Parameter.Name);
 
                 break;
             }
@@ -207,24 +206,31 @@ namespace ICafeUI
             int count = 0;
             for (int i = 0; i < list.Length; i++)
             {
-                if (list[i].Input == null || list[i].Input.Node != output) continue;
+                //if (!list[i].IsAssigned()) continue;
 
-                Border left = GetElementFromGrid(Outputs, list[i].Input.Field.field.Name);
-                Border right = GetElementFromGrid(Inputs, list[i].Parameter.Name);
+                ParameterData pd = list[i];
+                for (int j = 0; j < pd.Count; j++)
+                {
 
-                if (left == null || right == null) continue;
+                    if (pd.Inputs[j].Node != output) continue;
 
-                Point start = left.TranslatePoint(new Point(0, -left.ActualHeight * 2), HandlerSlot);
-                Point end = right.TranslatePoint(new Point(-right.ActualWidth, -right.ActualHeight * 2), HandlerSlot);
+                    Border left = GetElementFromGrid(Outputs, pd.Inputs[j].Field.field.Name);
+                    Border right = GetElementFromGrid(Inputs, pd.Parameter.Name);
 
-                Line l = new Line { Stroke = Brushes.Black, StrokeThickness = 2 };
-                l.X1 = start.X;
-                l.X2 = end.X;
-                l.Y1 = start.Y;
-                l.Y2 = end.Y;
+                    if (left == null || right == null) continue;
 
-                Connections.Children.Add(l);
-                count++;
+                    Point start = left.TranslatePoint(new Point(0, -left.ActualHeight * 2), HandlerSlot);
+                    Point end = right.TranslatePoint(new Point(-right.ActualWidth, -right.ActualHeight * 2), HandlerSlot);
+
+                    Line l = new Line { Stroke = Brushes.Black, StrokeThickness = 2 };
+                    l.X1 = start.X;
+                    l.X2 = end.X;
+                    l.Y1 = start.Y;
+                    l.Y2 = end.Y;
+
+                    Connections.Children.Add(l);
+                    count++;
+                }
             }
 
             RefreshInputColors();
@@ -239,9 +245,9 @@ namespace ICafeUI
             for (int i = 0; i < list.Length; i++)
             {
                 var elem = GetElementFromGrid(Inputs, list[i].Parameter.Name);
-                if (list[i].Input != null && list[i].Input.Node != output)
-                    elem.Background = Brushes.Gray;
-                else elem.Background = Brushes.White;
+                //if (list[i].IsFullyAssigned())
+                //    elem.Background = Brushes.Gray;
+                //else elem.Background = Brushes.White;
             }
         }
 
@@ -266,7 +272,7 @@ namespace ICafeUI
         void InitializeContextMenu()
         {
             cm = Grid.FindResource("ContextMenu") as ContextMenu;
-            (cm.Items[0] as MenuItem).Click += ConnectionView_Click; ;
+            (cm.Items[0] as MenuItem).Click += ConnectionView_Click;
         }
 
         void OpenContextMenu(bool DestoySingleConnection, string name, List<ParameterData> parameters)
@@ -295,19 +301,19 @@ namespace ICafeUI
 
         private void ConnectionView_Click(object sender, RoutedEventArgs e)
         {
-            if (curr_data.isInput)
-                ICafe.Core.Connector.RemoveConnection(input, curr_data.field_name);
-            else
-                ICafe.Core.Connector.RemoveConnections(output, curr_data.field_name);
+            //if (curr_data.isInput)
+            //    ICafe.Core.Connector.RemoveConnection(input, curr_data.field_name, output);
+            //else
+            //    ICafe.Core.Connector.RemoveConnections(output, curr_data.field_name);
 
             RefreshConnections();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var list = input.GetParameters();
-            for (int i = 0; i < list.Length; i++)
-                ICafe.Core.Connector.RemoveConnection(input, list[i].Parameter.Name);
+            //var list = input.GetParameters();
+            //for (int i = 0; i < list.Length; i++)
+            //    ICafe.Core.Connector.RemoveConnection(input, list[i].Parameter.Name, output);
 
             RefreshConnections();
         }
@@ -316,8 +322,8 @@ namespace ICafeUI
         {
             string value = (sender as MenuItem).Header.ToString();
 
-            ICafe.Core.Connector.RemoveConnection(input, value);
-            RefreshConnections();
+            //ICafe.Core.Connector.RemoveConnection(input, value, curr_data.field_name);
+            //RefreshConnections();
         }
     }
 }

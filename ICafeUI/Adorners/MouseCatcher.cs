@@ -31,8 +31,8 @@ namespace ICafeUI.Adorners
 
         private void MouseCatcher_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && Core.StateContainer.CurrentHandledNode != null)
-                node.CatchMouse();
+            //if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && Core.StateContainer.CurrentHandledNode != null)
+            //    node.CatchMouse();
         }
 
         private void MouseCatcher_Loaded(object sender, RoutedEventArgs e)

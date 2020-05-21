@@ -25,7 +25,7 @@ namespace ICafeUI
             this.brush = brush;
             this.input = input;
 
-            element.OnListToggle += ToggleVisibility;
+            //element.OnListToggle += ToggleVisibility;
         }
 
         void ToggleVisibility(bool visible)
@@ -39,7 +39,7 @@ namespace ICafeUI
             ellipse.Stroke = Brushes.Red;
             ellipse.Fill = Brushes.White;
 
-            drawingContext.DrawEllipse(brush, null, input ? element.LeftPoint : element.RightPoint, radius, radius);
+            //drawingContext.DrawEllipse(brush, null, input ? element.LeftPoint : element.RightPoint, radius, radius);
         }
     }
 }

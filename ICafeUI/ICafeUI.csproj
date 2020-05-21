@@ -35,6 +35,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,6 +64,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="NodeView.xaml.cs">
+      <DependentUpon>NodeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ZoomBorder.cs" />
     <Page Include="ConnectionHandler.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -96,9 +109,11 @@
       <DependentUpon>ConnectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\ConnectionViewGenerator.cs" />
+    <Compile Include="Core\FileManager.cs" />
     <Compile Include="Core\ISelectable.cs" />
     <Compile Include="Core\Selector.cs" />
     <Compile Include="Core\StateContainer.cs" />
+    <Compile Include="Core\TopBar.cs" />
     <Compile Include="Core\ViewGenerator.cs" />
     <Compile Include="Core\IControlInterface.cs" />
     <Compile Include="Core\WindowFactory.cs" />
@@ -106,7 +121,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Node.xaml">
+    <Page Include="NodeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Node_xaml\Node.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Node_xaml\NodePin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Node_xaml\Node_Line.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -128,8 +155,14 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Node.xaml.cs">
+    <Compile Include="Node_xaml\Node.xaml.cs">
       <DependentUpon>Node.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Node_xaml\NodePin.xaml.cs">
+      <DependentUpon>NodePin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Node_xaml\Node_Line.xaml.cs">
+      <DependentUpon>Node_Line.xaml</DependentUpon>
     </Compile>
     <Compile Include="NumberBox.xaml.cs">
       <DependentUpon>NumberBox.xaml</DependentUpon>
@@ -157,6 +190,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -172,6 +206,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Images\" />
     <Folder Include="System\Collections\Generic\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
