@@ -16,8 +16,6 @@ namespace ICafe.Core
 
         IntPtr shader_ptr;
 
-        BinaryFormatter bf;
-
         protected Effect(uint width, uint height, string path)
         {
             Width = width;
@@ -25,8 +23,6 @@ namespace ICafe.Core
 
             shader_ptr = CompileEffect(path);
             c_ptr = Wrapper.CreateBuffer(Width, Height, shader_ptr);
-
-            bf = new BinaryFormatter();
         }
 
         public static Effect CreateEffect(uint Width, uint Height, string path)
@@ -60,20 +56,15 @@ namespace ICafe.Core
             shader_ptr = IntPtr.Zero;
         }
 
-        public void UpdateShaderValue(uint register, string name, object value)
+        public void UpdateShaderValue(uint register, string name, float value)
         {
-            Wrapper.UpdateShader(shader_ptr, register, new StringBuilder(name), ObjectToByteArray(value));
+            var data = BitConverter.GetBytes(value);
+            Wrapper.UpdateShader(shader_ptr, register, new StringBuilder(name), data);
         }
 
-        byte[] ObjectToByteArray(object obj)
+        public void SetShaderTexture(uint register, Texture texture)
         {
-            if (obj == null)
-                return null;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
+            Wrapper.SetShaderTexture(shader_ptr, register, texture.c_ptr);
         }
     }
 }

@@ -49,6 +49,7 @@
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Registry.cs" />
+    <Compile Include="Core\Texture.cs" />
     <Compile Include="Core\View.cs" />
     <Compile Include="Core\Wrapper.cs" />
     <Compile Include="Test\EffectBackground.cs" />
@@ -70,6 +71,7 @@
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
     </Reference>

@@ -166,6 +166,8 @@ namespace ICafeUI
 
         private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (!mouseDown) return;
+
             mouseDown = false;
             Container.ReleaseMouseCapture();
 

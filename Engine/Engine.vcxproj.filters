@@ -80,6 +80,9 @@
     <ClInclude Include="ShaderBuffer.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderResource.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader_Test.hlsl">

@@ -171,6 +171,7 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ps_test.h</HeaderFileOutput>
     </FxCompile>
     <ClInclude Include="ShaderBuffer.h" />
+    <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="View.h" />
     <FxCompile Include="screen_pixel_shader.hlsl">
       <FileType>Document</FileType>

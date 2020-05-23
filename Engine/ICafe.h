@@ -39,6 +39,9 @@ namespace icafe
 
 		void* CreatePixelShader(void* byte_code, size_t len)
 		{
+			/*auto p = new PixelShader(*device, byte_code, len);
+			p->UpdateTexture(0, nullptr);*/
+
 			return new PixelShader(*device, byte_code, len);
 		}
 
@@ -50,6 +53,11 @@ namespace icafe
 		void ClearState()
 		{
 			device->ClearState();
+		}
+
+		Device* GetDXHandle()
+		{
+			return device;
 		}
 
 	private:
@@ -127,7 +135,25 @@ namespace icafe
 	{
 		shader->UpdateVariableValue(buffer_register, name, data);
 	}
+
+	extern "C" __declspec(dllexport) void* __stdcall CreateTexture(Context *context, UINT width, UINT height, UINT pitch, void* data, UINT format = 87)
+	{
+		Texture *texture = new Texture(*context->GetDXHandle(), width, height, (DXGI_FORMAT)format);
+		texture->Upload(data, pitch);
+
+		return texture;
+	}
+
+	extern "C" __declspec(dllexport) void __stdcall SetTexture(PixelShader *shader, UINT buffer_register, Texture* texture)
+	{
+		shader->UpdateTexture(buffer_register, texture);
+	}
 	
+	extern "C" __declspec(dllexport) void __stdcall DestroyTexture(Texture *texture)
+	{
+		delete texture;
+	}
+
 	extern "C" __declspec(dllexport) void __stdcall ClearContext(Context* context)
 	{
 		context->ClearState();

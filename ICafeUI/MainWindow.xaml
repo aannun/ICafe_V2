@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:ICafeUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800" Background="#FF323232">
+    
     <Grid>
         <local:ZoomBorder x:Name="View" ClipToBounds="True" Background="LightGray" AllowDrop="True" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseLeftButtonUp="Grid_MouseLeftButtonUp" MouseMove="View_MouseMove" >
             <Canvas Name="Container"/>

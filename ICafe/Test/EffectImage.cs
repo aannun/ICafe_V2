@@ -19,8 +19,8 @@ namespace ICafe.Core
 
             base.Start();
 
-            effect.UpdateShaderValue(1, "test1", 1.0);
-            effect.UpdateShaderValue(0, "test_ext", 1.0);
+            effect.UpdateShaderValue(0, "test1", 1.0f);
+            effect.UpdateShaderValue(0, "test_ext", 1.0f);
         }
     }
 }

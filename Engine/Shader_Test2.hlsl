@@ -9,7 +9,7 @@ struct ps_in
 
 float test;
 
-cbuffer Test : register(b0)
+cbuffer Test
 {
 	float test1;
 	float ss3;
@@ -18,5 +18,5 @@ cbuffer Test : register(b0)
 float4 main(ps_in IN) : SV_Target
 {
 	float4 color = buffer.Sample(ss, IN.uv);
-	return color + float4(0,1,0,0);
+	return color;// +float4(0, test, 0, 0);
 }

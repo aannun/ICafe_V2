@@ -42,6 +42,7 @@ public:
 
 		vertex_shader.Bind();
 		pixel_shader.Bind();
+		pixel_shader.BindResources();
 
 		render_data->render_target->Bind();
 		if (render_object) render_object->Bind(0);

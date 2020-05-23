@@ -112,5 +112,29 @@ namespace ICafe.Core
         {
             UpdateShaderValue(shader, buffer_register, name, data);
         }
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.StdCall)]
+        private extern static IntPtr CreateTexture(IntPtr context, uint width, uint height, uint pitch, byte[] data, uint format);
+
+        public static IntPtr CreateShaderTexture(uint width, uint height, uint pitch, byte[] data, uint format)
+        {
+            return CreateTexture(Context, width, height, pitch, data, format);
+        }
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.StdCall)]
+        private extern static void SetTexture(IntPtr shader, uint buffer_register, IntPtr texture);
+
+        public static void SetShaderTexture(IntPtr shader, uint buffer_register, IntPtr texture)
+        {
+            SetTexture(shader, buffer_register, texture);
+        }
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.StdCall)]
+        private extern static void DestroyTexture(IntPtr texture);
+
+        public static void DisposeTexture(IntPtr texture)
+        {
+            DestroyTexture(texture);
+        }
     }
 }

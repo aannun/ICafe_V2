@@ -6,7 +6,7 @@ struct ps_in
 
 uniform float test_ext;
 
-cbuffer Test
+cbuffer Test : register(b0)
 {
 	float test1;
 }

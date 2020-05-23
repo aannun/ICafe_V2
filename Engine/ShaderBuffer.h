@@ -2,7 +2,6 @@
 
 #include "Core.h"
 
-
 class ShaderVariable
 {
 public:
@@ -62,7 +61,12 @@ public:
 
 		memcpy(tmp_data + variable->offset, data, variable->length);
 
-		buffer->BindPS(register_index, data);
+		//buffer->BindPS(register_index, tmp_data);
+	}
+
+	void Bind()
+	{
+		buffer->BindPS(register_index, tmp_data);
 	}
 
 	~ShaderBuffer()
