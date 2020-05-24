@@ -64,7 +64,8 @@ namespace ICafe.Core
 
         public void SetShaderTexture(uint register, Texture texture)
         {
-            Wrapper.SetShaderTexture(shader_ptr, register, texture.c_ptr);
+            if (texture.isValid)
+                Wrapper.SetShaderTexture(shader_ptr, register, texture.c_ptr);
         }
     }
 }

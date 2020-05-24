@@ -106,7 +106,7 @@ namespace ICafeUI.Core
 
         public static void AddNode(string type_name, Point position, bool convert_position = false)
         {
-            ICafe.Core.Node n = ICafe.Core.Node.CreateNodeFromTypeName(type_name) as ICafe.Core.Node;
+            ICafe.Core.Node n = ICafe.Core.Node.CreateNodeFromUserTypeName(type_name) as ICafe.Core.Node;
             if (n == null) return;
 
             n.Initialize();

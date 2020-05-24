@@ -13,6 +13,10 @@ namespace ICafe.Core
 {
     public class EffectImage2 : EffectNode
     {
+        [FileField]
+        [Out]
+        public string TexturePath;
+
         Texture t;
 
         public override void Start()
@@ -21,9 +25,9 @@ namespace ICafe.Core
 
             base.Start();
 
-            effect.UpdateShaderValue(0, "test", 0.5f);
+            //effect.UpdateShaderValue(0, "test", 0.5f);
 
-            t = new Texture("D:\\Sprite\\BackBall.jpg");
+            t = new Texture(TexturePath);
             effect.SetShaderTexture(0, t);
         }
 

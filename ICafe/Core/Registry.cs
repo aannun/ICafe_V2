@@ -29,7 +29,7 @@ namespace ICafe.Core
             for (int i = 0; i < list.Length; i++)
             {
                 var instance = (ICafe.Core.Node)Activator.CreateInstance(list[i]);
-                NodeData d = new NodeData() { name = instance.GetName(), type = list[i] };
+                NodeData d = new NodeData() { name = instance.GetTypeName(), type = list[i] };
                 nodeDatas.Add(d);
             }
         }

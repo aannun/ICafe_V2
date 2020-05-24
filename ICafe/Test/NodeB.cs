@@ -8,39 +8,40 @@ namespace ICafe.Core
 {
     public class NodeB : Core.Node
     {
-        [Reactive]
+        [Out]
         public double value;
-        [Reactive]
+        [Out]
         public int a;
-        [Reactive]
+        [Out]
+        [FileField]
         public string string_value = "val";
-        [Reactive]
+        [Out]
         public bool test_bool;
-        [Reactive]
+        [Out]
         public Test test;
 
-        [Reactive]
+        [Out]
         public NodeA nodeA;
 
-        [Reactive]
+        [Out]
         public Test_Enum test_Enum;
 
         public enum Test_Enum { a, b, c, d };
 
         public struct Test
         {
-            [Reactive]
+            [Out]
             public double value_struct;
-            [Reactive]
+            [Out]
             public bool value2_struct;
 
-            [Reactive]
+            [Out]
             public tt internal_test;
         }
 
         public struct tt
         {
-            [Reactive]
+            [Out]
             public int a;
         }
 

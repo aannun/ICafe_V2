@@ -19,6 +19,7 @@ namespace ICafe.Core
 
         public Bitmap Bitmap { get; private set; }
         public IntPtr c_ptr { get; private set; }
+        public bool isValid { get; private set; }
 
         string path;
 
@@ -26,6 +27,7 @@ namespace ICafe.Core
         {
             if (!File.Exists(path)) return;
 
+            isValid = true;
             this.path = path;
             Bitmap = new Bitmap(path);
             FormatSize = (int)(Bitmap.GetPixelFormatSize(Bitmap.PixelFormat) / 8f);
@@ -38,8 +40,11 @@ namespace ICafe.Core
 
         public void Dispose()
         {
-            Bitmap.Dispose();
-            Wrapper.DisposeTexture(c_ptr);
+            if (isValid)
+            {
+                Bitmap.Dispose();
+                Wrapper.DisposeTexture(c_ptr);
+            }
         }
 
         public static byte[] BitmapToByteArray(Bitmap bitmap)

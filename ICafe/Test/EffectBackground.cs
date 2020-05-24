@@ -11,7 +11,7 @@ namespace ICafe.Core
 {
     class EffectBackground : Node
     {
-        [Reactive]
+        [Out]
         public RenderTargetBitmap I_Image;
         DrawingVisual img;
 

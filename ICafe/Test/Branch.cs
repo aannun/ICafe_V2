@@ -9,7 +9,7 @@ namespace ICafe.Core
 {
     class Branch : Core.Node
     {
-        [Reactive]
+        [Out]
         public float Timer;
 
         public override void Init()
@@ -19,10 +19,10 @@ namespace ICafe.Core
             BindCollectionParameter(GetParameter("value"), GetParameter("active"));
         }
 
-        //public void PreExecute(bool active)
-        //{
-        //    GetParameter("value").CurrentIndex = active ? 0 : 1;
-        //}
+        public override string GetTypeName()
+        {
+            return "TestBranch";
+        }
 
         public void Execute([Collection(2, new[] { "False", "True" })] int value, bool active = true)
         {

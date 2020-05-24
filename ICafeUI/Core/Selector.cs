@@ -12,6 +12,7 @@ namespace ICafeUI.Core
     static class Selector
     {
         public static ISelectable CurrentSelected { get; private set; }
+        public static int SelectedCount { get { return StateContainer.SelectedItems.Count; } }
 
         public static void AddSelection(ISelectable item, bool add)
         {
@@ -53,21 +54,21 @@ namespace ICafeUI.Core
             Point max = new Point(Math.Max(end.X, start.X), Math.Max(end.Y, start.Y));
             Point min = new Point(Math.Min(end.X, start.X), Math.Min(end.Y, start.Y));
 
-            Point size = new Point(max.X - min.X, max.Y - min.Y);
+            Size size = new Size(max.X - min.X, max.Y - min.Y);
             var list = StateContainer.GetFiltered<Node>();
 
             foreach (var item in list)
             {
                 Point p = item.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0));
 
-                if (Contains(p, min, size))
+                if(RectCollision(p, item.RenderSize, min, size))
                     AddSelection(item, true);
             }
         }
 
-        static bool Contains(Point p, Point r, Point size)
+        static bool RectCollision(Point p1, Size p1s, Point p2, Size p2s)
         {
-            if (p.X >= r.X && p.X <= r.X + size.X && p.Y >= r.Y && p.Y <= r.Y + size.Y) return true;
+            if (p1.X < p2.X + p2s.Width && p1.X + p1s.Width > p2.X && p1.Y < p2.Y + p2s.Height && p1.Y + p1s.Height > p2.Y) return true;
             return false;
         }
 

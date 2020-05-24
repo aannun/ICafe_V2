@@ -64,8 +64,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DynamicTextBox.xaml.cs">
+      <DependentUpon>DynamicTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileBox.xaml.cs">
+      <DependentUpon>FileBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NodeData.xaml.cs">
       <DependentUpon>NodeData.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NodeDataEntry.xaml.cs">
+      <DependentUpon>NodeDataEntry.xaml</DependentUpon>
     </Compile>
     <Compile Include="NodeView.xaml.cs">
       <DependentUpon>NodeView.xaml</DependentUpon>
@@ -84,6 +93,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ConnectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DynamicTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FileBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -125,6 +142,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="NodeData.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NodeDataEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

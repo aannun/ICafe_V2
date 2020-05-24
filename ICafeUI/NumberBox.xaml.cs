@@ -36,6 +36,7 @@ namespace ICafeUI
             set
             {
                 this.SetValue(ValueProperty, value);
+                Text.Text = value.ToString();
             }
         }
 
@@ -66,14 +67,14 @@ namespace ICafeUI
                 Text.PreviewTextInput += Text_PreviewTextInput;
                 Text.PreviewKeyDown += Text_PreviewKeyDown;
                 Text.TextChanged += Text_TextChanged;
-                Text.LostFocus += Text_LostFocus;
+                //Text.LostFocus += Text_LostFocus;
             }
         }
 
-        private void Text_LostFocus(object sender, RoutedEventArgs e)
-        {
-            Text.Text = Value.ToString();
-        }
+        //private void Text_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    Text.Text = Value.ToString();
+        //}
 
         private void Text_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -84,7 +85,8 @@ namespace ICafeUI
         private void Text_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space) e.Handled = true;
-            else if (e.Key == Key.Return || e.Key == Key.Enter) { Keyboard.ClearFocus(); Text_LostFocus(null, null); }
+            else if (e.Key == Key.Return || e.Key == Key.Enter) { Keyboard.ClearFocus(); }
+            //Text_LostFocus(null, null); }
         }
 
         private void Text_PreviewTextInput(object sender, TextCompositionEventArgs e)

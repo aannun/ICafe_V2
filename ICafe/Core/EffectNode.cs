@@ -33,13 +33,13 @@ namespace ICafe.Core
 
     public class EffectNode : Node
     {
-        [Reactive]
+        [Out]
         public int Width = 800;
-        [Reactive]
+        [Out]
         public int Height = 800;
-        [Reactive]
+        [Out]
         public string Path_To_Effect;
-        [Reactive]
+        [Out]
         public EffectChain EffectChain;
 
         protected Effect effect;

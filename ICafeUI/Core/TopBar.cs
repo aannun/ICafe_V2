@@ -42,24 +42,6 @@ namespace ICafeUI.Core
                 Player.Stop();
         }
 
-        string OpenFileDialog()
-        {
-            OpenFileDialog f = new OpenFileDialog();
-            f.Filter = File_Filter;
-            if (f.ShowDialog() == true)
-                return f.FileName;
-            return null;
-        }
-
-        string OpenFolderDialog()
-        {
-            CommonOpenFileDialog f = new CommonOpenFileDialog();
-            f.IsFolderPicker = true;
-            if (f.ShowDialog() == CommonFileDialogResult.Ok)
-                return f.FileName;
-            return null;
-        }
-
         string GetEncodedFile()
         {
             var nodes = StateContainer.GetFiltered<Node>();
@@ -76,17 +58,9 @@ namespace ICafeUI.Core
             return ICafe.Core.Encoder.Encode(ns, positions);
         }
 
-        string OpenSaveFileDialog()
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            if (saveFileDialog.ShowDialog() == true)
-                return saveFileDialog.FileName;
-            return null;
-        }
-
         public void SaveAs()
         {
-            string path = OpenSaveFileDialog();
+            string path = FileManager.OpenSaveFileDialog();
             if (path == null) return;
 
             string s = GetEncodedFile();
@@ -109,7 +83,7 @@ namespace ICafeUI.Core
 
         public void Open()
         {
-            string path = OpenFileDialog();
+            string path = FileManager.OpenFileDialog(File_Filter);
             if (path == null) return;
 
             StateContainer.DestroyAllNodes();

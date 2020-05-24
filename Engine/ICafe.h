@@ -55,6 +55,13 @@ namespace icafe
 			device->ClearState();
 		}
 
+		~Context()
+		{
+			delete screen_vertex_shader;
+			delete screen_pixel_shader;
+			delete device;
+		}
+
 		Device* GetDXHandle()
 		{
 			return device;

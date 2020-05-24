@@ -57,7 +57,7 @@ namespace ICafeUI
             ExecutingNode = node;
             ID = ExecutingNode.ID;
 
-            Name.Text = ExecutingNode.NodeName;
+            BindName();
 
             state_open = true;
             SetLock(true);
@@ -65,6 +65,36 @@ namespace ICafeUI
 
             InitINContainerData();
             InitOUTContainerData();
+
+            Loaded += Node_Loaded;
+        }
+
+        private void Node_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window.GetWindow(this).Closing += Node_Closing;
+        }
+
+        private void Node_Closing(object sender, CancelEventArgs e)
+        {
+            UnbindName();
+        }
+
+        void BindName()
+        {
+            var name_field = ExecutingNode.GetNameField();
+            name_field.Field.PropertyChanged += UpdateName;
+            Name.Text = ExecutingNode.NodeName;
+        }
+
+        void UnbindName()
+        {
+            var name_field = ExecutingNode.GetNameField();
+            name_field.Field.PropertyChanged -= UpdateName;
+        }
+
+        void UpdateName(object sender, PropertyChangedEventArgs args)
+        {
+            Name.Text = ExecutingNode.NodeName;
         }
 
         public void RefreshConnections()
@@ -128,6 +158,7 @@ namespace ICafeUI
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            window.Closed -= Window_Closed;
             window = null;
         }
 
@@ -173,7 +204,8 @@ namespace ICafeUI
         {
             base.OnMouseLeftButtonDown(e);
 
-            Core.Selector.AddSelection(this, Core.Selector.IsAddKeyDown());
+            bool should_add = Core.Selector.IsAddKeyDown() ? true : (Core.Selector.SelectedCount > 1);
+            Core.Selector.AddSelection(this, should_add);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -222,6 +254,8 @@ namespace ICafeUI
             var list = ExecutingNode.GetFields();
             for (int i = 0; i < list.Length; i++)
             {
+                if (!list[i].IsOut) continue;
+
                 Node_xaml.NodePin pin = new Node_xaml.NodePin(false, list[i].Field.field.FieldType, list[i].Field.field.Name, list[i].Field.field.Name, Name, this, false);
                 OUT_Container.Children.Add(pin);
                 OnHideChanged += (x) => pin.Hidden = x;

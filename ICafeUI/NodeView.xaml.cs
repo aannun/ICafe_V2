@@ -38,12 +38,6 @@ namespace ICafeUI
         {
             open = !open;
             RefreshVisibility();
-
-            //if (open)
-            //{
-            //    Mouse.Capture(Main, CaptureMode.SubTree);
-            //    AddHandler();
-            //}
         }
 
         void RefreshVisibility()

@@ -8,10 +8,10 @@ namespace ICafe.Core
 {
     class TestNode : Node
     {
-        [Reactive]
+        [Out]
         public float Timer1;
 
-        [Reactive]
+        [Out]
         public float Timer2;
 
         int Texture_index;

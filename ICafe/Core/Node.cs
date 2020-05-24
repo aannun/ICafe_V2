@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-public class Reactive : Attribute
+public class Out : Attribute
 {
 }
 
@@ -28,11 +28,22 @@ public class Collection : Attribute
     }
 }
 
+public class FileField : Attribute
+{
+    public string filter;
+    public bool is_folder;
+
+    public FileField(string filter = null, bool is_folder = false)
+    {
+        this.filter = filter;
+        this.is_folder = is_folder;
+    }
+}
+
 namespace ICafe.Core
 {
     public enum ExecutionOutput { OK = 0, NOTVALID = 1, LOOP = 2 }
 
-    [BaseNodeClass]
     public class ReactiveField : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -102,8 +113,6 @@ namespace ICafe.Core
     public class Node
     {
         public string NodeName;
-
-        public int CurrentFieldIndex { get; private set; }
 
         public MethodInfo ExecuteInfo { get; private set; }
 
@@ -237,6 +246,7 @@ namespace ICafe.Core
             public ReactiveField Field;
             public List<ParameterConnection> Inputs;
             public Node Node;
+            public bool IsOut;
 
             public struct ParameterConnection
             {
@@ -291,11 +301,11 @@ namespace ICafe.Core
         {
             ID = guid;
 
-            NodeName = GetName();
+            NodeName = GetTypeName();
 
-            InitializeReactiveFields();
+            InitializeFields();
             InitMethods();
-            SetInputs();
+            InitializeParameters();
 
             Init();
 
@@ -327,7 +337,7 @@ namespace ICafe.Core
             valid = false;
         }
 
-        void SetInputs()
+        void InitializeParameters()
         {
             if (!valid) return;
 
@@ -345,22 +355,21 @@ namespace ICafe.Core
             }
         }
 
-        void InitializeReactiveFields()
+        void InitializeFields()
         {
             fields = new Dictionary<string, FieldData>();
+
+            var f_name = this.GetType().GetField("NodeName");
+            fields.Add(f_name.Name, new FieldData { Field = new ReactiveField(this, f_name), Node = this });
 
             var fs = this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
             for (int i = 0; i < fs.Length; i++)
             {
-                fields.Add(fs[i].Name, new FieldData { Field = new ReactiveField(this, fs[i]), Node = this, Inputs = new List<FieldData.ParameterConnection>() });
-            }
-        }
+                if (fs[i] == f_name) continue;
 
-        public static bool IsTypeValid(FieldInfo info)
-        {
-            if (info.GetCustomAttribute(typeof(Reactive)) != null)
-                return IsTypeValid(info.FieldType);
-            return false;
+                bool is_out = fs[i].GetCustomAttribute<Out>() != null;
+                fields.Add(fs[i].Name, new FieldData { Field = new ReactiveField(this, fs[i]), Node = this, Inputs = new List<FieldData.ParameterConnection>(), IsOut = is_out });
+            }
         }
 
         public static bool IsTypeValid(Type type)
@@ -391,6 +400,16 @@ namespace ICafe.Core
             return fields != null ? fields.Values.ToArray() : null;
         }
 
+        public FieldData GetNameField()
+        {
+            return fields["NodeName"];
+        }
+
+        public void SetNameField(string new_name)
+        {
+            fields["NodeName"].Field.Property = new_name;
+        }
+
         public ParameterData[] GetParameters()
         {
             return parameters != null ? parameters.Values.ToArray() : null;
@@ -399,12 +418,6 @@ namespace ICafe.Core
         public ParameterData GetParameter(string ParameterName)
         {
             if (parameters.ContainsKey(ParameterName)) return parameters[ParameterName];
-            return null;
-        }
-
-        public ReactiveField GetReactiveField(string FieldName)
-        {
-            if (fields.ContainsKey(FieldName)) return fields[FieldName].Field;
             return null;
         }
 
@@ -463,14 +476,6 @@ namespace ICafe.Core
             return objs;
         }
 
-        public ReactiveField GetActiveField()
-        {
-            var list = GetFields();
-            if (list != null && list.Length > 0)
-                return list[CurrentFieldIndex].Field;
-            return null;
-        }
-
         public static Type[] GetAllNodeTypes()
         {
             var q = from t in Assembly.GetExecutingAssembly().GetTypes()
@@ -485,7 +490,13 @@ namespace ICafe.Core
             return Assembly.GetExecutingAssembly().CreateInstance(!as_full_path ? typeof(Node).Namespace + "." + type_name : type_name);
         }
 
-        public virtual string GetName()
+        public static object CreateNodeFromUserTypeName(string type_name)
+        {
+            Type type = Registry.GetNodeTypeFromName(type_name);
+            return Assembly.GetExecutingAssembly().CreateInstance(type.FullName);
+        }
+
+        public virtual string GetTypeName()
         {
             return this.GetType().Name;
         }

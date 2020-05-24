@@ -15,9 +15,9 @@ namespace ICafe.Core
 {
     class OutputNode : Node
     {
-        [Reactive]
+        [@Out]
         public int Width = 800;
-        [Reactive]
+        [@Out]
         public int Height = 800;
 
         View view;

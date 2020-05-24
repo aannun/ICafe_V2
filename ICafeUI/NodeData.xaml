@@ -6,16 +6,16 @@
              xmlns:local="clr-namespace:ICafeUI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <StackPanel>
-            <Label Foreground="White" Background="#FF1F86AC" Margin="2,5">Node Name</Label>
-            <Grid>
+    <Grid Background="#FF323232">
+        <DockPanel>
+            <Label Name="NodeName_Label" DockPanel.Dock="Top" Foreground="White" Background="#FF1F86AC">Node Name</Label>
+            <Grid DockPanel.Dock="Top" Margin="0,4">
                 <TextBlock Margin="5,2" Name="txtHint" Text="Search..." Foreground="LightGray"/>
                 <TextBox MinWidth="50" Name="txtSearchBox" Background="Transparent" Foreground="White" TextChanged="TxtSearchBox_TextChanged"/>
             </Grid>
-            <StackPanel Name="Data">
-                
-            </StackPanel>
-        </StackPanel>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                <StackPanel Name="Data"/>
+            </ScrollViewer>
+        </DockPanel>
     </Grid>
 </UserControl>

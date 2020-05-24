@@ -8,10 +8,10 @@ namespace ICafe.Core
 {
     public class NodeA : Core.Node
     {
-        [Reactive]
+        [Out]
         public int b = 1;
 
-        [Reactive]
+        [Out]
         public bool test = true;
 
         public void Start(bool test)

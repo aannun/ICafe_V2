@@ -52,7 +52,7 @@ namespace ICafe.Core
 
                 for (int j = 0; j < list.Length; j++)
                 {
-                    if (list[j].Inputs.Count > 0)
+                    if(list[j].IsOut && list[j].Inputs.Count > 0)
                     {
                         empty = false;
                         break;

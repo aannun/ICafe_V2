@@ -76,8 +76,8 @@ public:
 	{
 		delete swap_chain_render_target;
 		delete swap_chain;
-		delete window;
 		delete screen;
+		delete window;
 
 		for (size_t i = 0; i < effects.size(); i++)
 			delete effects[i];

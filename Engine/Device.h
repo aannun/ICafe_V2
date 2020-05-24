@@ -84,6 +84,16 @@ public:
 		context->ClearState();
 	}
 
+	~Device()
+	{
+		rs->Release();
+		dss->Release();
+		ss->Release();
+
+		context->Release();
+		device->Release();
+	}
+
 	ID3D11Device5 * GetDXHandle() { return device; }
 	ID3D11DeviceContext4* GetDXContext() { return context; }
 
